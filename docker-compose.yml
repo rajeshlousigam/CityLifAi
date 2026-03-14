@@ -1,17 +1,12 @@
 services:
-  citylife-ai:
+  weather-assistant:
     build: .
-    container_name: citylife-ai
+    container_name: weather-assistant
     environment:
-      - OPENAI_API_KEY=""
-      - GOOGLE_MAPS_API_KEY=""
-      - GOOGLE_PLACES_API_KEY=""
-      - MEETUP_API_TOKEN=""
-      - SPORTS_API_BASE_URL="https://api.playo.io/api"
-      - SPORTS_API_KEY=""
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     stdin_open: true
     ports:
-      - "8000:8000"
+      - "5000"
     tty: true
     networks:
       - agents-net

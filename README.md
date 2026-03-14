@@ -1,101 +1,81 @@
-# CityLife AI
+# Weather Assistant Agent
 
-CityLife AI is a multi-agent planning system for Bangalore that runs on FastAPI + LangChain and calls real external APIs for traffic, restaurants, events, and sports booking.
+This is a sample weather assistant agent built using the [A2A (Agent-to-Agent)](https://github.com/ashishsharma/nasiko) template.
 
-## Architecture
+It provides weather information, forecasts, and temperature conversions for major cities through a conversational interface.
 
-- Python 3.11
-- FastAPI server (A2A JSON-RPC compatible)
-- LangChain-powered agents
-- Async API calls with `httpx`
-- Modular code in `src/agents`, `src/tools`, `src/services`, `src/config`, `src/api`
+## Features
 
-## Agents
+- **Current Weather**: Get real-time weather information for supported cities
+- **Weather Forecast**: Multi-day weather forecasting (up to 7 days)  
+- **Temperature Conversion**: Convert between Celsius, Fahrenheit, and Kelvin
+- **Conversational Interface**: Natural language interaction powered by LangChain
 
-- `PlannerAgent`: orchestrates all sub-agents and builds final itinerary JSON
-- `TrafficAgent`: route planning + traffic ETA via Google Maps APIs
-- `FoodAgent`: restaurant discovery + rating signals via Google Places API
-- `SportsAgent`: Playo-style sports slot discovery via configurable sports API
-- `EventsAgent`: tech/community event discovery via Meetup GraphQL API
-- `WeekendAgent`: weekend idea synthesis from food + event signals
+## Supported Cities
 
-## Project Structure
+- London
+- New York  
+- Tokyo
+- Paris
+- Mumbai
 
-```text
-src/
-    agents/
-        planner_agent.py
-        traffic_agent.py
-        food_agent.py
-        sports_agent.py
-        events_agent.py
-        weekend_agent.py
-    tools/
-        google_maps_tools.py
-        restaurant_tools.py
-        sports_tools.py
-        events_tools.py
-    services/
-        orchestrator.py
-        api_clients.py
-        schemas.py
-    api/
-        server.py
-    config/
-        settings.py
-    agent.py
-    main.py
-    __main__.py
-    models.py
+## Frameworks
+- **Server**: FastAPI
+- **Agent Logic**: LangChain with OpenAI GPT-4
+- **Protocol**: A2A JSON-RPC 2.0
 
-requirements.txt
-.env.example
-README.md
-```
+## Structure
 
-## Setup
+- `src/__main__.py`: FastAPI server handling A2A JSON-RPC `message/send` requests
+- `src/models.py`: A2A protocol Pydantic models (Message, Task, etc.)
+- `src/tools.py`: Weather-specific tools (get_weather, get_weather_forecast, convert_temperature)
+- `src/agent.py`: Weather assistant agent logic and prompt configuration
+- `AgentCard.json`: Agent metadata and capabilities
+- `Dockerfile`: Docker configuration
 
-1. Install dependencies:
+## How to Run
 
-```bash
-pip install -r requirements.txt
-```
+1. **Set OpenAI API Key**:
+   ```bash
+   export OPENAI_API_KEY=your_openai_api_key
+   ```
 
-2. Create `.env` from `.env.example` and fill keys:
+2. **Build and Run with Docker**:
+   ```bash
+   docker build -t weather-agent .
+   docker run -p 5000:5000 -e OPENAI_API_KEY=$OPENAI_API_KEY weather-agent
+   ```
 
-- `OPENAI_API_KEY`
-- `GOOGLE_MAPS_API_KEY`
-- `GOOGLE_PLACES_API_KEY`
-- `MEETUP_API_TOKEN`
-- `SPORTS_API_BASE_URL`
-- `SPORTS_API_KEY`
-- `SPORTS_API_ENDPOINT` (default: `/activity-public/list/location`)
+3. **Test the Agent**:
+   ```bash
+   curl -X POST http://localhost:5000/ \
+   -H "Content-Type: application/json" \
+   -d '{
+     "jsonrpc": "2.0",
+     "id": "1",
+     "method": "message/send", 
+     "params": {
+       "message": {
+         "role": "user",
+         "parts": [{"kind": "text", "text": "What is the weather like in London?"}]
+       }
+     }
+   }'
+   ```
 
-3. Start the server:
+## Example Interactions
 
-```bash
-python src/__main__.py --host 0.0.0.0 --port 8000
-```
+- "What's the weather like in Tokyo?"
+- "Give me a 5-day forecast for New York"
+- "Convert 25 degrees Celsius to Fahrenheit"
+- "Is it raining in London today?"
 
-## API
+## Customization
 
-- `GET /health`: health check
-- `POST /`: A2A JSON-RPC endpoint (`message/send`)
+To modify this agent for your own use case:
 
-Example user message text:
-
-`Plan my Saturday in Bangalore`
-
-The planner returns itinerary JSON shaped like:
-
-```json
-{
-    "morning": "Sunrise trip",
-    "lunch": "Restaurant recommendation",
-    "evening": "Sports activity",
-    "night": "Event",
-    "routes": "Best routes between places",
-    "details": {}
-}
-```
+1. **Edit `src/tools.py`**: Add your own tools using the `@tool` decorator
+2. **Edit `src/agent.py`**: Customize the system prompt and agent behavior  
+3. **Update `AgentCard.json`**: Modify agent metadata and capabilities
+4. **Update Dockerfile**: Add any additional dependencies
 
