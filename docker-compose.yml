@@ -1,0 +1,21 @@
+services:
+  citylife-ai:
+    build: .
+    container_name: citylife-ai
+    environment:
+      - OPENAI_API_KEY=""
+      - GOOGLE_MAPS_API_KEY=""
+      - GOOGLE_PLACES_API_KEY=""
+      - MEETUP_API_TOKEN=""
+      - SPORTS_API_BASE_URL="https://api.playo.io/api"
+      - SPORTS_API_KEY=""
+    stdin_open: true
+    ports:
+      - "8000:8000"
+    tty: true
+    networks:
+      - agents-net
+
+networks:
+  agents-net:
+    external: true
