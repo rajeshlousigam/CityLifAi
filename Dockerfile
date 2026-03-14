@@ -10,6 +10,7 @@ RUN pip install --no-cache-dir \
     pydantic>=2.6.0 \
     python-dotenv>=1.0.0 \
     requests>=2.31.0 \
+    datagovindia \
     "langchain>=0.2.0,<0.3.0" \
     "langchain-openai>=0.1.0,<0.2.0" \
     PyGithub>=2.1.1 \

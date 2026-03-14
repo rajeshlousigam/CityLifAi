@@ -1,9 +1,10 @@
 services:
-  weather-assistant:
+  gov-data-assistant:
     build: .
-    container_name: weather-assistant
+    container_name: gov-data-assistant
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DATAGOVINDIA_API_KEY=${DATAGOVINDIA_API_KEY}
     stdin_open: true
     ports:
       - "5000"
